@@ -8,6 +8,28 @@ variable "compartment_id" {
   type        = string
 }
 
+variable "credentials" {
+  description = "(Optional) Initial database system credentials that the database system will be provisioned with. The password details are not visible on any subsequent operation, such as GET /dbSystems/{dbSystemId}."
+  type = object({
+    password_details = object({
+      password       = string
+      password_type  = string
+      secret_id      = string
+      secret_version = optional(number)
+    })
+    username = string
+  })
+}
+
+variable "network_details" {
+  description = "(Required) (Updatable) Network details for the database system."
+  type = object({
+    subnet_id                      = string
+    nsg_ids                        = optional(list(string))
+    primary_db_endpoint_private_ip = optional(string)
+  })
+}
+
 variable "db_version" {
   description = "(Required) Version of DbSystem software."
   type        = number
@@ -71,45 +93,20 @@ variable "instance_ocpu_count" {
   default     = 2
 }
 
-variable "subnet_id" {
-  description = "(Required) Customer Subnet identifier"
-  type        = string
-}
-
-variable "nsg_ids" {
-  description = "(Optional) List of customer NetworkSecurityGroup identifiers"
-  type        = list(string)
-  default     = []
-}
-
-variable "primary_db_endpoint_private_ip" {
-  description = "(Optional) Private IP in customer subnet. The value is optional. If the IP is not provided the IP will be chosen among the available IP addresses from the specified subnet."
-  type        = string
-  default     = null
-}
-
-variable "storage_details_is_regionally_durable" {
-  description = "(Required) Specifies if the block volume used for the DbSystem is regional or AD-local. If not specified, it will be set to false. If isRegionallyDurable is set to true, availabilityDomain should not be specified. If isRegionallyDurable is set to false, availabilityDomain must be specified."
-  type        = bool
-  default     = true
-}
-
-variable "storage_details_system_type" {
-  description = "(Required) Type of the DbSystem."
-  type        = string
-  default     = "OCI_OPTIMIZED_STORAGE"
-}
-
-variable "storage_details_ad" {
-  description = "(Optional) Specifies the availability domain of AD-local storage. If isRegionallyDurable is set to true, availabilityDomain should not be specified. If isRegionallyDurable is set to false, availabilityDomain must be specified."
-  type        = string
-  default     = 1
-}
-
-variable "storage_details_iops" {
-  description = "(Applicable when system_type=OCI_OPTIMIZED_STORAGE) (Updatable) DbSystem Performance Unit"
-  type        = number
-  default     = 300000
+variable "storage_details" {
+  description = "(Required) (Updatable) Storage details of the database system."
+  type = object({
+    is_regionally_durable = bool
+    system_type           = string
+    availability_domain   = optional(number)
+    iops                  = optional(number)
+  })
+  default = {
+    is_regionally_durable = true
+    system_type           = "OCI_OPTIMIZED_STORAGE"
+    availability_domain   = 1
+    iops                  = 300000
+  }
 }
 
 variable "instances_details" {
@@ -148,17 +145,4 @@ variable "db_system_source" {
     is_having_restore_config_overrides = optional(string)
   }))
   default = {}
-}
-
-variable "credentials" {
-  description = "(Optional) Initial database system credentials that the database system will be provisioned with. The password details are not visible on any subsequent operation, such as GET /dbSystems/{dbSystemId}."
-  type = object({
-    password_details = object({
-      password       = string
-      password_type  = string
-      secret_id      = string
-      secret_version = optional(number)
-    })
-    username = string
-  })
 }

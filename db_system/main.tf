@@ -32,16 +32,16 @@ resource "oci_psql_db_system" "this" {
   db_version   = var.db_version
   display_name = var.display_name
   network_details {
-    nsg_ids                        = var.nsg_ids
-    primary_db_endpoint_private_ip = var.primary_db_endpoint_private_ip
-    subnet_id                      = var.subnet_id
+    subnet_id                      = var.network_details.subnet_id
+    nsg_ids                        = var.network_details.nsg_ids
+    primary_db_endpoint_private_ip = var.network_details.primary_db_endpoint_private_ip
   }
   shape = var.shape
   storage_details {
-    iops                  = var.storage_details_iops
-    is_regionally_durable = var.storage_details_is_regionally_durable
-    system_type           = var.storage_details_system_type
-    availability_domain   = local.ads[var.storage_details_ad - 1].name
+    is_regionally_durable = var.storage_details.is_regionally_durable
+    system_type           = var.storage_details.system_type
+    availability_domain   = local.ads[var.storage_details.availability_domain - 1].name
+    iops                  = var.storage_details.iops
   }
   config_id                   = var.config_id
   defined_tags                = var.defined_tags
