@@ -1,5 +1,10 @@
+variable "tenancy_id" {
+  description = "(Required) (Updatable) The OCID of the tenancy."
+  type        = string
+}
+
 variable "compartment_id" {
-  description = "(Required) (Updatable) Compartment identifier"
+  description = "(Required) (Updatable) The [OCID](https://docs.cloud.oracle.com/iaas/Content/General/Concepts/identifiers.htm) of the compartment that contains the database system."
   type        = string
 }
 
@@ -107,31 +112,6 @@ variable "storage_details_iops" {
   default     = 300000
 }
 
-variable "username" {
-  description = "(Required) The DB system username."
-  type        = string
-}
-
-variable "password_type" {
-  description = "(Required) Password type"
-  type        = string
-}
-
-variable "password" {
-  description = "(Required when password_type=PLAIN_TEXT) The dbSystem password."
-  type        = string
-}
-
-variable "secret_id" {
-  description = "(Required when password_type=VAULT_SECRET) The OCID of secret where the password is stored."
-  type        = string
-}
-
-variable "secret_version" {
-  description = "(Required when password_type=VAULT_SECRET) The secret version where the password is stored."
-  type        = number
-}
-
 variable "instances_details" {
   description = " (Optional) Details of DbInstances to be created. Optional parameter. If specified, its size must match instanceCount."
   type = map(object({
@@ -168,4 +148,17 @@ variable "db_system_source" {
     is_having_restore_config_overrides = optional(string)
   }))
   default = {}
+}
+
+variable "credentials" {
+  description = "(Optional) Initial database system credentials that the database system will be provisioned with. The password details are not visible on any subsequent operation, such as GET /dbSystems/{dbSystemId}."
+  type = object({
+    password_details = object({
+      password       = string
+      password_type  = string
+      secret_id      = string
+      secret_version = optional(number)
+    })
+    username = string
+  })
 }
