@@ -25,6 +25,7 @@ variable "network_details" {
   description = "(Required) (Updatable) Network details for the database system."
   type = object({
     subnet_id                      = string
+    is_reader_endpoint_enabled     = optional(bool)
     nsg_ids                        = optional(list(string))
     primary_db_endpoint_private_ip = optional(string)
   })

@@ -9,7 +9,6 @@ locals {
 resource "oci_psql_db_system" "this" {
   compartment_id = var.compartment_id
   credentials {
-    username = var.credentials.username
     password_details {
       password_type = var.credentials.password_details.password_type
       password = (
@@ -28,11 +27,13 @@ resource "oci_psql_db_system" "this" {
 	null
       )
     }
+    username = var.credentials.username
   }
   db_version   = var.db_version
   display_name = var.display_name
   network_details {
     subnet_id                      = var.network_details.subnet_id
+    is_reader_endpoint_enabled     = var.network_details.is_reader_endpoint_enabled
     nsg_ids                        = var.network_details.nsg_ids
     primary_db_endpoint_private_ip = var.network_details.primary_db_endpoint_private_ip
   }
@@ -51,7 +52,7 @@ resource "oci_psql_db_system" "this" {
   instance_memory_size_in_gbs = var.instance_memory_size_in_gbs
   instance_ocpu_count         = var.instance_ocpu_count
   dynamic "instances_details" {
-    for_each = var.instances_details != null ? var.instances_details : {}
+    for_each = try(var.instances_details, {})
     iterator = id
     content {
       description  = id.value.description
@@ -61,7 +62,7 @@ resource "oci_psql_db_system" "this" {
   }
   management_policy {
     dynamic "backup_policy" {
-      for_each = var.backup_policy
+      for_each = try(var.backup_policy, {})
       iterator = bp
       content {
 	backup_start      = bp.value.backup_start
@@ -74,7 +75,7 @@ resource "oci_psql_db_system" "this" {
     maintenance_window_start = var.maintenance_window_start
   }
   dynamic "source" {
-    for_each = var.db_system_source
+    for_each = try(var.db_system_source, {})
     iterator = s
     content {
       source_type                        = s.value.source_type
