@@ -39,6 +39,7 @@ variable "description" {
   type        = string
   default     = null
 }
+
 variable "freeform_tags" {
   description = "(Optional) Simple key-value pair that is applied without any predefined name, type or scope."
   type        = map(string)
@@ -385,4 +386,10 @@ variable "db_configuration_items" {
 variable "items" {
   description = "(Required) Configuration Overrides for PGSQL instance."
   type        = map(string)
+}
+
+variable "is_flexible" {
+  description = "(Optional) Whether the configuration supports flexible shapes."
+  type        = bool
+  default     = true
 }
