@@ -120,22 +120,19 @@ variable "instances_details" {
   default = {}
 }
 
-variable "backup_policy" {
-  description = "(Optional) (Updatable) Posgresql DB system backup policy"
-  type = map(object({
-    backup_start      = optional(string)
-    days_of_the_month = optional(list(number))
-    days_of_the_week  = optional(list(string))
-    kind              = optional(string)
-    retention_days    = optional(number)
-  }))
+variable "management_policy" {
+  description = "(Optional) (Updatable) PostgreSQL database system management policy update details."
+  type = object({
+    backup_policy = optional(map(object({
+      backup_start      = optional(string)
+      days_of_the_month = optional(list(number))
+      days_of_the_week  = optional(list(string))
+      kind              = optional(string)
+      retention_days    = optional(number)
+    })))
+    maintenance_window_start = optional(string)
+  })
   default = {}
-}
-
-variable "maintenance_window_start" {
-  description = "(Optional) (Updatable) The start of the maintenance window."
-  type        = string
-  default     = "SAT 08:00"
 }
 
 variable "db_system_source" {

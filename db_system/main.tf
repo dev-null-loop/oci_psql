@@ -60,19 +60,23 @@ resource "oci_psql_db_system" "this" {
       private_ip   = id.value.private_ip
     }
   }
-  management_policy {
-    dynamic "backup_policy" {
-      for_each = try(var.backup_policy, {})
-      iterator = bp
-      content {
-	backup_start      = bp.value.backup_start
-	days_of_the_month = bp.value.days_of_the_month
-	days_of_the_week  = bp.value.days_of_the_week
-	kind              = bp.value.kind
-	retention_days    = bp.value.retention_days
+  dynamic "management_policy" {
+    for_each = var.management_policy[*]
+    iterator = mp
+    content {
+      dynamic "backup_policy" {
+	for_each = mp.value.backup_policy[*]
+	iterator = bp
+	content {
+	  backup_start      = bp.value.backup_start
+	  days_of_the_month = bp.value.days_of_the_month
+	  days_of_the_week  = bp.value.days_of_the_week
+	  kind              = bp.value.kind
+	  retention_days    = bp.value.retention_days
+	}
       }
+      maintenance_window_start = mp.value.maintenance_window_start
     }
-    maintenance_window_start = var.maintenance_window_start
   }
   dynamic "source" {
     for_each = try(var.db_system_source, {})
