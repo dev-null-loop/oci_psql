@@ -1,395 +1,78 @@
+variable "compatible_shapes" {
+  description = "Indicates the collection of compatible shapes for this configuration."
+  type        = list(string)
+  default     = []
+}
+
 variable "compartment_id" {
-  description = "(Required) (Updatable) Compartment identifier"
+  description = "The [OCID](https://docs.cloud.oracle.com/iaas/Content/General/Concepts/identifiers.htm) of the compartment that contains the configuration."
   type        = string
+}
+
+variable "db_configuration_overrides" {
+  description = "Configuration overrides for a PostgreSQL instance."
+  type = object({
+    items = list(object({
+      config_key             = string
+      overriden_config_value = string
+    }))
+  })
 }
 
 variable "db_version" {
-  description = "(Required) Version of the Postgresql DB"
-  type        = number
-}
-
-variable "display_name" {
-  description = "(Required) (Updatable) configuration display name"
-  type        = string
-}
-
-variable "instance_memory_size_in_gbs" {
-  description = "(Required) Memory Size in GB with 1GB increment. Min value matches the cpuCoreCount. Max value depends on the shape."
-  type        = number
-}
-
-variable "instance_ocpu_count" {
-  description = "(Required) CPU cpuCoreCount. Min value is 1. Max value depends on the shape."
-  type        = number
-}
-
-variable "shape" {
-  description = "(Required) Compute Shape Name like VM.Standard3.Flex."
+  description = "Version of the PostgreSQL database."
   type        = string
 }
 
 variable "defined_tags" {
-  description = "(Optional) Defined tags for this resource. Each key is predefined and scoped to a namespace."
+  description = "Defined tags for this resource. Each key is predefined and scoped to a namespace. Example: `{\"foo-namespace.bar-key\": \"value\"}`"
   type        = map(string)
-  default     = {}
+  default     = null
 }
 
 variable "description" {
-  description = "(Optional) (Updatable) Details about the Configuration Set."
+  description = "Details about the configuration set."
   type        = string
   default     = null
 }
 
+variable "display_name" {
+  description = "A user-friendly display name for the configuration. Avoid entering confidential information."
+  type        = string
+}
+
 variable "freeform_tags" {
-  description = "(Optional) Simple key-value pair that is applied without any predefined name, type or scope."
+  description = "Simple key-value pair that is applied without any predefined name, type or scope. Exists for cross-compatibility only. Example: `{\"bar-key\": \"value\"}`"
   type        = map(string)
   default     = {}
 }
 
-variable "system_tags" {
-  description = "(Optional) System tags for this resource. Each key is predefined and scoped to a namespace."
-  type        = map(string)
-  default     = {}
+variable "instance_memory_size_in_gbs" {
+  description = "Memory size in gigabytes with 1GB increment.\n\nSkip or set it's value to 0 if configuration is for a flexible shape."
+  type        = number
+  default     = null
 }
 
-variable "db_configuration_items" {
-  description = "List of default db configuration item"
-  type        = list(string)
-  default = [
-    "log_directory",
-    "effective_io_concurrency",
-    "max_parallel_workers",
-    "session_preload_libraries",
-    "vacuum_defer_cleanup_age",
-    "gin_fuzzy_search_limit",
-    "jit_dump_bitcode",
-    "log_statement_sample_rate",
-    "ssl",
-    "compute_query_id",
-    "enable_sort",
-    "application_name",
-    "debug_print_plan",
-    "log_min_error_statement",
-    "default_table_access_method",
-    "lo_compat_privileges",
-    "default_tablespace",
-    "logical_decoding_work_mem",
-    "wal_compression",
-    "log_replication_commands",
-    "vacuum_freeze_min_age",
-    "allow_in_place_tablespaces",
-    "commit_siblings",
-    "enable_async_append",
-    "log_parameter_max_length_on_error",
-    "hot_standby_feedback",
-    "ssl_ecdh_curve",
-    "jit_tuple_deforming",
-    "remove_temp_files_after_crash",
-    "wal_recycle",
-    "constraint_exclusion",
-    "max_stack_depth",
-    "min_parallel_table_scan_size",
-    "bonjour",
-    "min_parallel_index_scan_size",
-    "ssl_max_protocol_version",
-    "jit_optimize_above_cost",
-    "TimeZone",
-    "track_commit_timestamp",
-    "extra_float_digits",
-    "wal_skip_threshold",
-    "wal_receiver_create_temp_slot",
-    "archive_timeout",
-    "check_function_bodies",
-    "parallel_tuple_cost",
-    "enable_hashjoin",
-    "dynamic_library_path",
-    "recovery_target_name",
-    "force_parallel_mode",
-    "cursor_tuple_fraction",
-    "jit_inline_above_cost",
-    "track_functions",
-    "vacuum_multixact_freeze_min_age",
-    "syslog_split_messages",
-    "checkpoint_completion_target",
-    "enable_partitionwise_join",
-    "default_text_search_config",
-    "autovacuum_analyze_scale_factor",
-    "max_connections",
-    "authentication_timeout",
-    "backend_flush_after",
-    "geqo_effort",
-    "row_security",
-    "wal_consistency_checking",
-    "wal_level",
-    "client_encoding",
-    "max_slot_wal_keep_size",
-    "trace_notify",
-    "log_transaction_sample_rate",
-    "listen_addresses",
-    "log_min_duration_sample",
-    "max_parallel_workers_per_gather",
-    "enable_bitmapscan",
-    "timezone_abbreviations",
-    "cpu_index_tuple_cost",
-    "max_wal_size",
-    "maintenance_io_concurrency",
-    "log_statement",
-    "log_duration",
-    "dynamic_shared_memory_type",
-    "enable_gathermerge",
-    "lc_numeric",
-    "min_wal_size",
-    "autovacuum_freeze_max_age",
-    "pre_auth_delay",
-    "update_process_title",
-    "default_transaction_read_only",
-    "track_wal_io_timing",
-    "geqo_seed",
-    "ident_file",
-    "primary_slot_name",
-    "vacuum_multixact_freeze_table_age",
-    "xmloption",
-    "tcp_keepalives_count",
-    "quote_all_identifiers",
-    "archive_mode",
-    "wal_receiver_timeout",
-    "idle_in_transaction_session_timeout",
-    "parallel_setup_cost",
-    "geqo_pool_size",
-    "logging_collector",
-    "autovacuum_work_mem",
-    "geqo_generations",
-    "ssl_ca_file",
-    "vacuum_failsafe_age",
-    "max_pred_locks_per_relation",
-    "default_transaction_deferrable",
-    "tcp_keepalives_interval",
-    "deadlock_timeout",
-    "transform_null_equals",
-    "tcp_user_timeout",
-    "port",
-    "transaction_deferrable",
-    "commit_delay",
-    "enable_tidscan",
-    "recovery_end_command",
-    "log_min_duration_statement",
-    "trace_sort",
-    "enable_hashagg",
-    "wal_init_zero",
-    "log_parser_stats",
-    "checkpoint_flush_after",
-    "session_replication_role",
-    "autovacuum_vacuum_insert_scale_factor",
-    "ignore_invalid_pages",
-    "track_counts",
-    "enable_indexonlyscan",
-    "join_collapse_limit",
-    "enable_indexscan",
-    "geqo_threshold",
-    "debug_pretty_print",
-    "default_transaction_isolation",
-    "huge_pages",
-    "bgwriter_lru_maxpages",
-    "parallel_leader_participation",
-    "enable_mergejoin",
-    "max_prepared_transactions",
-    "recovery_target_inclusive",
-    "checkpoint_timeout",
-    "enable_memoize",
-    "temp_buffers",
-    "track_activities",
-    "archive_cleanup_command",
-    "superuser_reserved_connections",
-    "cluster_name",
-    "log_lock_waits",
-    "max_locks_per_transaction",
-    "password_encryption",
-    "idle_session_timeout",
-    "log_recovery_conflict_waits",
-    "log_connections",
-    "post_auth_delay",
-    "ssl_prefer_server_ciphers",
-    "vacuum_cost_page_dirty",
-    "wal_receiver_status_interval",
-    "effective_cache_size",
-    "standard_conforming_strings",
-    "enable_parallel_hash",
-    "jit_provider",
-    "statement_timeout",
-    "temp_tablespaces",
-    "autovacuum_vacuum_cost_delay",
-    "local_preload_libraries",
-    "recovery_target_xid",
-    "autovacuum_analyze_threshold",
-    "wal_buffers",
-    "log_line_prefix",
-    "enable_partitionwise_aggregate",
-    "max_files_per_process",
-    "allow_system_table_mods",
-    "unix_socket_group",
-    "autovacuum_vacuum_insert_threshold",
-    "debug_print_rewritten",
-    "max_standby_streaming_delay",
-    "full_page_writes",
-    "log_checkpoints",
-    "syslog_ident",
-    "autovacuum_multixact_freeze_max_age",
-    "log_parameter_max_length",
-    "jit",
-    "lc_time",
-    "max_standby_archive_delay",
-    "max_parallel_maintenance_workers",
-    "lock_timeout",
-    "transaction_isolation",
-    "krb_caseins_users",
-    "autovacuum_naptime",
-    "max_worker_processes",
-    "ssl_dh_params_file",
-    "ssl_crl_dir",
-    "jit_expressions",
-    "backslash_quote",
-    "bgwriter_delay",
-    "log_disconnections",
-    "recovery_target_action",
-    "IntervalStyle",
-    "ssl_ciphers",
-    "wal_writer_delay",
-    "recovery_min_apply_delay",
-    "synchronize_seqscans",
-    "shared_preload_libraries",
-    "checkpoint_warning",
-    "recovery_target_lsn",
-    "temp_file_limit",
-    "unix_socket_directories",
-    "max_pred_locks_per_transaction",
-    "plan_cache_mode",
-    "gin_pending_list_limit",
-    "hash_mem_multiplier",
-    "restore_command",
-    "trace_recovery_messages",
-    "array_nulls",
-    "max_sync_workers_per_subscription",
-    "max_replication_slots",
-    "restart_after_crash",
-    "data_sync_retry",
-    "max_wal_senders",
-    "exit_on_error",
-    "ssl_crl_file",
-    "geqo",
-    "seq_page_cost",
-    "wal_retrieve_retry_interval",
-    "log_file_mode",
-    "enable_material",
-    "log_planner_stats",
-    "autovacuum_vacuum_cost_limit",
-    "archive_command",
-    "min_dynamic_shared_memory",
-    "data_directory",
-    "geqo_selection_bias",
-    "log_truncate_on_rotation",
-    "recovery_target",
-    "vacuum_multixact_failsafe_age",
-    "wal_writer_flush_after",
-    "config_file",
-    "db_user_namespace",
-    "recovery_target_timeline",
-    "enable_incremental_sort",
-    "jit_profiling_support",
-    "krb_server_keyfile",
-    "client_min_messages",
-    "vacuum_cost_limit",
-    "shared_memory_type",
-    "unix_socket_permissions",
-    "maintenance_work_mem",
-    "DateStyle",
-    "track_activity_query_size",
-    "wal_sync_method",
-    "cpu_operator_cost",
-    "max_pred_locks_per_page",
-    "hot_standby",
-    "huge_page_size",
-    "max_logical_replication_workers",
-    "enable_partition_pruning",
-    "tcp_keepalives_idle",
-    "shared_buffers",
-    "bonjour_name",
-    "search_path",
-    "wal_sender_timeout",
-    "event_source",
-    "debug_discard_caches",
-    "ignore_system_indexes",
-    "backtrace_functions",
-    "xmlbinary",
-    "bytea_output",
-    "recovery_target_time",
-    "wal_keep_size",
-    "enable_parallel_append",
-    "log_temp_files",
-    "syslog_facility",
-    "lc_messages",
-    "bgwriter_flush_after",
-    "log_executor_stats",
-    "ssl_passphrase_command_supports_reload",
-    "external_pid_file",
-    "old_snapshot_threshold",
-    "autovacuum_vacuum_scale_factor",
-    "log_destination",
-    "jit_debugging_support",
-    "syslog_sequence_numbers",
-    "ssl_min_protocol_version",
-    "work_mem",
-    "stats_temp_directory",
-    "bgwriter_lru_multiplier",
-    "default_toast_compression",
-    "log_rotation_age",
-    "recovery_init_sync_method",
-    "cpu_tuple_cost",
-    "log_error_verbosity",
-    "enable_seqscan",
-    "client_connection_check_interval",
-    "log_rotation_size",
-    "fsync",
-    "ssl_cert_file",
-    "from_collapse_limit",
-    "log_min_messages",
-    "synchronous_standby_names",
-    "autovacuum_max_workers",
-    "log_timezone",
-    "vacuum_cost_delay",
-    "log_autovacuum_min_duration",
-    "log_statement_stats",
-    "lc_monetary",
-    "log_hostname",
-    "synchronous_commit",
-    "jit_above_cost",
-    "transaction_read_only",
-    "autovacuum_vacuum_threshold",
-    "log_filename",
-    "random_page_cost",
-    "ssl_passphrase_command",
-    "vacuum_freeze_table_age",
-    "zero_damaged_pages",
-    "wal_log_hints",
-    "ignore_checksum_failure",
-    "ssl_key_file",
-    "debug_print_parse",
-    "vacuum_cost_page_hit",
-    "vacuum_cost_page_miss",
-    "escape_string_warning",
-    "autovacuum",
-    "default_statistics_target",
-    "enable_nestloop",
-    "track_io_timing"
-  ]
-}
-
-variable "items" {
-  description = "(Required) Configuration Overrides for PGSQL instance."
-  type        = map(string)
+variable "instance_ocpu_count" {
+  description = "CPU core count.\n\nSkip or set it's value to 0 if configuration is for a flexible shape."
+  type        = number
+  default     = null
 }
 
 variable "is_flexible" {
-  description = "(Optional) Whether the configuration supports flexible shapes."
+  description = "Whether the configuration supports flexible shapes."
   type        = bool
-  default     = true
+  default     = null
+}
+
+variable "shape" {
+  description = "The name of the shape for the configuration.\n\nFor multi-shape enabled configurations, it is set to PostgreSQL.X86 or similar. Please use compatibleShapes property to set the list of supported shapes."
+  type        = string
+  default     = null
+}
+
+variable "system_tags" {
+  description = "System tags for this resource. Each key is predefined and scoped to a namespace. Example: `{\"orcl-cloud.free-tier-retained\": \"true\"}`"
+  type        = map(string)
+  default     = null
 }
